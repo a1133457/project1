@@ -7,10 +7,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 DESC `coupons`;
 DESC `coupon_categories`;
-DESC `coupon_level`;
+DESC `coupon_levels`;
 DESC `user_coupons`;
 
 SELECT * FROM `coupons`;
+SELECT * FROM `coupon_categories`;
 
 
 CREATE TABLE coupons (
@@ -33,15 +34,15 @@ CREATE TABLE coupon_categories (
   coupon_id INT NOT NULL,
   category_id INT NOT NULL,
   FOREIGN KEY (coupon_id) REFERENCES coupons(id),
-  FOREIGN KEY (category_id) REFERENCES products_category(id)
+  FOREIGN KEY (category_id) REFERENCES products_category(category_id)
 );
 
-CREATE TABLE coupon_level (
+CREATE TABLE coupon_levels (
   id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   coupon_id INT NOT NULL,
   level_id INT NOT NULL,
   FOREIGN KEY (coupon_id) REFERENCES coupons(id),
-  FOREIGN KEY (level_id) REFERENCES user_level(id)
+  FOREIGN KEY (level_id) REFERENCES member_levels(id)
 );
 
 CREATE TABLE user_coupons (
@@ -60,5 +61,41 @@ CREATE TABLE user_coupons (
 
 
 
-
 DROP TABLE `coupons`;
+DROP TABLE `coupon_levels`;
+DROP TABLE `coupon_categories`;
+
+
+----------------------------------------------商品類別的SQL
+CREATE TABLE `products_category`(
+ `category_id`  INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+ `category_name`  VARCHAR(30)
+);
+
+INSERT INTO products_category (category_name) VALUES
+('客廳'),
+('餐廳/廚房'),
+('臥室'),
+('兒童房'),
+('辦公空間'),
+('收納用品');
+
+
+
+DESC `products_category`;
+
+SELECT * FROM `products_category`;
+DROP TABLE `products_category`;
+
+-------------------------------------------會員的SQL
+CREATE TABLE `member_levels`(
+    `id` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name` VARCHAR(20)
+);
+
+INSERT INTO `member_levels` (name) VALUES
+('木芽會員'),
+('原木會員'),
+('森林會員');
+
+SELECT * FROM `member_levels`;

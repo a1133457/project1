@@ -1,6 +1,8 @@
 <?php
 require_once "./connect.php";
 
+$values = [];
+
 // $cid = isset($_GET["cid"]) ? $_GET["cid"] :0 ;
 
 // $cid = intval($_GET["cid"] ?? 0);
@@ -13,40 +15,56 @@ require_once "./connect.php";
 //     $values = ["cid" => $cid];
 // }
 
+// 排序
+$order = $_GET["order"] ?? "asc";
 
 
 
+$orderSQL = "ORDER BY :order DESC ";
 
 
-
+// 搜尋
 $search = $_GET["search"] ?? "";
-// $searchType = $_GET["qType"] ?? "";
+$searchType = "";
 
 if ($search == "") {
     $searchSQL = "";
 } else {
-    $searchSQL = "`$searchType` LIKE :search AND";
+    $searchSQL = "(`name` LIKE :search OR `code` LIKE :search) AND ";
     $values["search"] = "%$search%";
 }
 
-// $date1 = $_GET["date1"] ?? "";
-// $date2 = $_GET["date2"] ?? "";
-// $dateSQL = "";
-// if ($searchType == "createTime") {
-//     if ($date1 != "" && $date2 != "") {
-//         $startDateTime = "{$date1} 00:00:00";
-//         $endDateTime = "{$date2} 23:59:59";
-//     } elseif ($date1 == "" && $date2 != "") {
-//         $startDateTime = "{$date2} 00:00:00";
-//         $endDateTime = "{$date2} 23:59:59";
-//     } elseif ($date2 == "" && $date1 != "") {
-//         $startDateTime = "{$date1} 00:00:00";
-//         $endDateTime = "{$date1} 23:59:59";
-//     }
-//     $dateSQL = "(`createTime` BETWEEN :startDateTime AND :endDateTime) AND";
-//     $values["startDateTime"] = $startDateTime;
-//     $values["endDateTime"] = $endDateTime;
-// }
+// 日期要修改
+$date1 = $_GET["date1"] ?? "";
+$date2 = $_GET["date2"] ?? "";
+$dateSQL = "";
+
+if ($date1 != "" && $date2 != "") {
+    $startDateTime = "{$date1} 00:00:00";
+    $endDateTime = "{$date2} 23:59:59";
+    $dateSQL = "(
+        (`start_at` <= :endDateTime) AND
+        (`end_at` >= :startDateTime)
+    ) AND ";
+    $values["startDateTime"] = $startDateTime;
+    $values["endDateTime"] = $endDateTime;
+
+} elseif ($date1 != "") {
+    $startDateTime = "{$date1} 00:00:00";
+    $dateSQL = "(`end_at` >= :startDateTime) AND ";
+    $values["startDateTime"] = $startDateTime;
+
+} elseif ($date2 != "") {
+    $endDateTime = "{$date2} 23:59:59";
+    $dateSQL = "(`start_at` <= :endDateTime) AND";
+    $values["endDateTime"] = $endDateTime;
+}
+
+
+
+
+
+
 
 $perPage = 10;
 $page = intval($_GET["page"] ?? 1);
@@ -54,7 +72,8 @@ $pageStart = ($page - 1) * $perPage;
 
 
 
-$sql = "SELECT * FROM `coupons` WHERE `is_valid` = 1 LIMIT $perPage OFFSET $pageStart";
+// $sql = "SELECT * FROM `coupons` WHERE `is_valid` = 1 LIMIT $perPage OFFSET $pageStart";
+$sql = "SELECT * FROM `coupons` WHERE $searchSQL $dateSQL `is_valid` = 1 LIMIT $perPage OFFSET $pageStart";
 $sqlAll = "SELECT * FROM `coupons` WHERE `is_valid` = 1";
 // $sql = "SELECT * FROM `coupons` WHERE $cateSQL $searchSQL  $dateSQL (`end_at` IS NULL OR `end_at` > NOW()) LIMIT $perPage OFFSET $pageStart";
 // $sqlAll = "SELECT * FROM `coupons` WHERE $cateSQL $searchSQL $dateSQL (`end_at` IS NULL OR `end_at` > NOW())";
@@ -63,7 +82,7 @@ $sqlAll = "SELECT * FROM `coupons` WHERE `is_valid` = 1";
 
 try {
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(); //$values
+    $stmt->execute($values);
     $rows = $stmt->fetchAll();
 
     // $stmtCate = $pdo->prepare($sqlCate);
@@ -458,19 +477,24 @@ $totalPage = ceil($couponLength / $perPage);
                     <h1 class="h3 mb-2 text-gray-800">優惠券管理系統</h1>
                     <a href="./insert.php" class="btn btn-primary btn-sm mb-2">新增優惠券</a>
 
-                    <div class="d-flex align-items-center gap-8 justify-content-end mr-4 mb-3">
-                        <div class="input-group w-250 mr-4">
 
+                    <div class="d-flex align-items-center gap-8 justify-content-end mr-4 mb-3">
+                        <form class="input-group w-250 mr-4 d-flex">
                             <input name="search" type="text" class="form-control form-control-sm"
                                 placeholder="搜尋優惠券名稱或優惠碼">
-                            <button class="btn btn-sm btn-search" type="button"><i
+                            <button type="submit" class="btn btn-sm btn-search"><i
                                     class="fa-solid fa-magnifying-glass"></i></button>
-                        </div>
+                        </form>
+
+                        <!-- <input name="search" type="text" class="form-control form-control-sm"
+                                placeholder="搜尋優惠券名稱或優惠碼">
+                            <button class="btn btn-sm btn-search" type="button"><i
+                                    class="fa-solid fa-magnifying-glass"></i></button> -->
 
                         <span>有效日期範圍</span>
-                        <input name="date1" type="date" class="form-control input-date form-control-sm w-150">
+                        <input name="date1" type="date" class="form-control input-date form-control-sm w-150" value="<?= $_GET["date1"] ?? ""?>">
                         <span> ~ </span>
-                        <input name="date2" type="date" class="form-control input-date form-control-sm w-150">
+                        <input name="date2" type="date" class="form-control input-date form-control-sm w-150" value="<?= $_GET["date2"] ?? ""?>">
                     </div>
 
                     <!-- 優惠券列表 -->
@@ -495,14 +519,14 @@ $totalPage = ceil($couponLength / $perPage);
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th>index</th>
-                                            <th>名稱</th>
+                                            <th><a href="./couponsList.php?order={$order}" class="a-reset">index&nbsp;&nbsp;<i class="fa-solid fa-sort-up"></i></a></th>
+                                            <th>名稱&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>折扣碼</th>
-                                            <th>最低消費門檻</th>
+                                            <th>最低消費門檻&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>折扣</th>
-                                            <th>數量(張)</th>
+                                            <th>數量(張)&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>狀態</th>
-                                            <th>有效期限</th>
+                                            <th>有效期限&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
@@ -557,7 +581,7 @@ $totalPage = ceil($couponLength / $perPage);
                                             if ($date1 != "")
                                                 $link .= "&date1={$date1}";
                                             if ($date2 != "")
-                                                $link .= "&date1={$date2}";
+                                                $link .= "&date2={$date2}";
                                             ?>
                                             <a class="page-link" href="<?= $link ?>"><?= $i ?></a>
                                         </li>

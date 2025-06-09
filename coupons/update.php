@@ -461,8 +461,8 @@ try {
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <span class="input-group-text">最低消費金額</span>
-                                            <input required name="min-discount" type="number" class="form-control" min="0"
-                                                value="<?= $row["min_discount"] ?>">
+                                            <input required name="min-discount" type="number" class="form-control"
+                                                min="0" value="<?= $row["min_discount"] ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -496,54 +496,19 @@ try {
                                     </div>
                                 </div>
 
-
                                 <div class="mb-3">
-                                    <label class="form-label">適用指定商品類別</label><br>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]" id="cat_all"
-                                            value="all" checked>
-                                        <label class="form-check-label" for="cat_all">全部類別</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_living" value="客廳">
-                                        <label class="form-check-label" for="cat_living">客廳</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_bedroom" value="臥室">
-                                        <label class="form-check-label" for="cat_bedroom">臥室</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_kids" value="兒童房">
-                                        <label class="form-check-label" for="cat_kids">兒童房</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_dining" value="餐廚空間">
-                                        <label class="form-check-label" for="cat_dining">餐廚空間</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_office" value="辦公空間">
-                                        <label class="form-check-label" for="cat_office">辦公空間</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_storage" value="收納用品">
-                                        <label class="form-check-label" for="cat_storage">收納用品</label>
+                                    <label class="form-label">適用商品類別</label><br>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
+                                        <input type="checkbox" class="btn-check" id="btncheck" name="@@@@@@">
+                                        <label class="btn btn-outline-primary rounded-pill" for="btncheck">全部類別</label>
+                                        <?php foreach ($rows as $i => $row): ?>
+                                            <input type="checkbox" class="btn-check" id="btncheck<?= $i ?>"
+                                                name="category[]">
+                                            <label class="btn btn-outline-primary rounded-pill"
+                                                for="btncheck<?= $i ?>"><?= $row["category_name"] ?></label>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
-
-
 
                                 <div class="mb-3">
                                     <label class="form-label">有效期限設定</label>
@@ -585,8 +550,9 @@ try {
                                     <div id="relative_section" class="mb-4 d-none">
                                         <div class="input-group">
                                             <span class="input-group-text">領取後</span>
-                                            <input type="number" class="form-control valid-days" name="valid-days" min="1"
-                                                max="1000" placeholder="請輸入有效天數" value="<?= $row["valid_days"] ?>">
+                                            <input type="number" class="form-control valid-days" name="valid-days"
+                                                min="1" max="1000" placeholder="請輸入有效天數"
+                                                value="<?= $row["valid_days"] ?>">
                                             <span class="input-group-text">天內有效</span>
                                         </div>
                                     </div>

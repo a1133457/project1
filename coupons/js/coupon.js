@@ -1,11 +1,14 @@
 const btnDels = document.querySelectorAll(".btn-del");
 const btnSearch = document.querySelector(".btn-search");
+
 const inputDate1 = document.querySelector("input[name=date1]");
 const inputDate2 = document.querySelector("input[name=date2]");
+
 const searchTypeAll = document.querySelectorAll("input[name=searchType]");
 const inputText = document.querySelector("input[name=search]");
 const inputDate = document.querySelectorAll(".input-date");
 
+const btnChang = document.querySelectorAll(".btn-chang");
 
 
 // 這邊的都要記得用事件監聽!!! 因為表格會重劃
@@ -18,23 +21,12 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#dataTable').DataTable({
         paging: false,        // 不要分頁
         searching: false,     // 不要搜尋
-        info: false,          // 不要 "顯示第 X 至 X 筆 共 X 筆"
+        info: false,          // 不要 筆數
         ordering: false,      // 不要排序
         autoWidth: false,     // 不自動加寬
         language: {
             url: '//cdn.datatables.net/plug-ins/1.11.3/i18n/zh-HANT.json'
-        },
-        // columnDefs: [
-        //     { width: '82px', targets: 0 },
-        //     { width: '250px', targets: 1 },
-        //     { width: '120px', targets: 2 },
-        //     { width: '140px', targets: 3 },
-        //     { width: '120px', targets: 4 },
-        //     { width: '120px', targets: 5 },
-        //     { width: '100px', targets: 6 },
-        //     { width: '250px', targets: 7 },
-        //     { width: '100px', targets: 8 }
-        // ]
+        }
     });
 });
 
@@ -48,13 +40,10 @@ document.addEventListener('click', function (event) {
 });
 
 // 搜尋
-
 btnSearch.addEventListener("click", function () {
     const query = inputText.value;
     window.location.href = `./couponsList.php?search=${query}`;
 });
-
-
 
 // 點月曆文字 也會跑出月曆來
 inputDate.forEach(input => {
@@ -63,11 +52,21 @@ inputDate.forEach(input => {
     });
 });
 
+// !日期搜尋
 
+inputDate1.addEventListener("change", autoSearch);
+inputDate2.addEventListener("change", autoSearch);
 
+function autoSearch() {
+    const date1 = inputDate1.value;
+    const date2 = inputDate2.value;
+    window.location.href = `./couponsList.php?date1=${date1}&date2=${date2}`;
+};
 
-
-
+// 按鈕切換升冪降冪
+// btnChang.addEventListener("click", () => {
+//     window.location.href = `./couponsList.php?order=${order}`;
+// });
 
 
 

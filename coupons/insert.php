@@ -1,3 +1,24 @@
+<?php
+require_once "./connect.php";
+
+$sqlCate = "SELECT * FROM `products_category`";
+$sqlLv = "SELECT * FROM `member_levels`";
+$errorMsg = "";
+try {
+    $stmtCate = $pdo->prepare($sqlCate);
+    $stmtCate->execute();
+    $rowsCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtLv = $pdo->prepare($sqlLv);
+    $stmtLv->execute();
+    $rowsLv = $stmtLv->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // echo "錯誤: {{$e->getMessage()}}";
+    // exit;
+    $errorMsg = $e->getMessage();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -406,8 +427,8 @@
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <span class="input-group-text">最低消費金額</span>
-                                            <input required name="min-discount" type="number" class="form-control" min="0"
-                                                value="0">
+                                            <input required name="min-discount" type="number" class="form-control"
+                                                min="0" value="0">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -420,131 +441,36 @@
                                 </div>
 
 
-                                <div class="d-flex align-items-center mb-3">
-                                    <label class="form-label me-3 mb-0" style="min-width: 80px;">會員限制</label>
-
-                                    <!-- Checkbox 群組 -->
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_all" value="all" checked>
-                                        <label class="form-check-label" for="level_all">全部</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_normal" value="normal">
-                                        <label class="form-check-label" for="level_normal">一般會員</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_vip" value="vip">
-                                        <label class="form-check-label" for="level_vip">VIP會員</label>
+                                <div class="mb-3">
+                                    <label class="form-label">會員限制</label><br>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
+                                        <input type="checkbox" class="btn-check" id="member-btncheck" name="member-levels[]"
+                                            value="all">
+                                        <label class="btn btn-outline-primary rounded-pill" for="member-btncheck">全部會員</label>
+                                        <?php foreach ($rowsLv as $iLv => $rowLv): ?>
+                                            <input type="checkbox" class="btn-check" id="member-btncheck<?= $iLv ?>"
+                                                name="member-levels[]" value="<?= $rowLv["id"] ?>">
+                                            <label class="btn btn-outline-primary rounded-pill"
+                                                for="member-btncheck<?= $iLv ?>"><?= $rowLv["name"] ?></label>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
 
-                                <!-- <div class="mb-3">
-                                    <label class="form-label">適用指定商品類別</label><br> -->
-
-                                    <!-- 折疊觸發按鈕
-                                    <button class="btn btn-outline-secondary btn-sm mb-2" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#categoryCollapse"
-                                        aria-expanded="false" aria-controls="categoryCollapse">
-                                        選擇商品類別
-                                    </button>
-
-                                    折疊區域 
-                                    <div class="collapse" id="categoryCollapse">
-                                        <div class="border rounded p-2">
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_all" value="all" checked>
-                                                <label class="form-check-label" for="cat_all">全部類別</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_living" value="客廳">
-                                                <label class="form-check-label" for="cat_living">客廳</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_bedroom" value="臥室">
-                                                <label class="form-check-label" for="cat_bedroom">臥室</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_kids" value="兒童房">
-                                                <label class="form-check-label" for="cat_kids">兒童房</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_dining" value="餐廚空間">
-                                                <label class="form-check-label" for="cat_dining">餐廚空間</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_office" value="辦公空間">
-                                                <label class="form-check-label" for="cat_office">辦公空間</label>
-                                            </div>
-
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" name="categories[]"
-                                                    id="cat_storage" value="收納用品">
-                                                <label class="form-check-label" for="cat_storage">收納用品</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
 
                                 <div class="mb-3">
-                                    <label class="form-label">適用指定商品類別</label><br>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]" id="cat_all"
-                                            value="all" checked>
-                                        <label class="form-check-label" for="cat_all">全部類別</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_living" value="客廳">
-                                        <label class="form-check-label" for="cat_living">客廳</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_bedroom" value="臥室">
-                                        <label class="form-check-label" for="cat_bedroom">臥室</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_kids" value="兒童房">
-                                        <label class="form-check-label" for="cat_kids">兒童房</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_dining" value="餐廚空間">
-                                        <label class="form-check-label" for="cat_dining">餐廚空間</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_office" value="辦公空間">
-                                        <label class="form-check-label" for="cat_office">辦公空間</label>
-                                    </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            id="cat_storage" value="收納用品">
-                                        <label class="form-check-label" for="cat_storage">收納用品</label>
+                                    <label class="form-label">適用商品類別</label><br>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
+                                        <input type="checkbox" class="btn-check" id="category-btncheck" name="category[]"
+                                            value="all">
+                                        <label class="btn btn-outline-primary rounded-pill" for="category-btncheck">全部類別</label>
+                                        <?php foreach ($rowsCate as $iCate => $rowCate): ?>
+                                            <input type="checkbox" class="btn-check" id="category-btncheck<?= $iCate ?>"
+                                                name="category[]" value="<?= $rowCate["category_id"] ?>">
+                                            <label class="btn btn-outline-primary rounded-pill"
+                                                for="category-btncheck<?= $iCate ?>"><?= $rowCate["category_name"] ?></label>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
-
 
 
                                 <div class="mb-3">
