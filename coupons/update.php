@@ -4,50 +4,50 @@ require_once "./utilities.php";
 
 
 $id = $_GET["id"];
+// $categories = $_GET["category"];
+// $memberLevels = $_GET["member-levels"];
 
 
 $sql = "SELECT * FROM `coupons` WHERE `id` = ?";
 
-// $sql = "SELECT 
-//             `msgs`.*,
-//             GROUP_CONCAT(imgs.file SEPARATOR ',') AS `imgs`
-//         FROM `msgs`
-//         LEFT JOIN `imgs`
-//         ON `msgs`.`id` = `imgs`.`msg_id`
-//         WHERE `msgs`.`id` = ?
-//         GROUP BY `msgs`.`id`;";
+$sqlCate = "SELECT * FROM `products_category`";
+$sqlLv = "SELECT * FROM `member_levels`";
 
-// $sqlCate = "SELECT * FROM `category`";
-// $sqlReply = "SELECT * FROM `replies` WHERE `msg_id` = ?";
-// $sqlActive = "SELECT * FROM `activies` WHERE `msg_id` = ?";
+$sqlCateSelect = "SELECT `coupon_id`, `category_id` FROM `coupon_categories` WHERE `coupon_id` = ?";
+$sqlLvSelect = "SELECT `coupon_id`, `level_id` FROM `coupon_levels` WHERE `coupon_id` = ?";
 
 try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //   if ($row["imgs"]) {
-//     $row["imgs"] = explode(",", $row["imgs"]);
-//   } else {
-//     $row["imgs"] = [];
-//   }
 
-    //   $stmtActive = $pdo->prepare($sqlActive);
-//   $stmtActive->execute([$id]);
-//   $rowsActive = $stmtActive->fetchAll(PDO::FETCH_ASSOC);
+    //顯示
+    $stmtCate = $pdo->prepare($sqlCate);
+    $stmtCate->execute();
+    $rowsCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
 
-    //   $stmtCate = $pdo->prepare($sqlCate);
-//   $stmtCate->execute();
-//   $rowsCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
+    $stmtLv = $pdo->prepare($sqlLv);
+    $stmtLv->execute();
+    $rowsLv = $stmtLv->fetchAll(PDO::FETCH_ASSOC);
+
+    // 選的紀錄
+    // 商品
+    $stmtCateSelect = $pdo->prepare($sqlCateSelect);
+    $stmtCateSelect->execute([$id]);
+    $selectedCategories = $stmtCateSelect->fetchAll(PDO::FETCH_COLUMN,1);
+
+    //會員
+    $stmtLvSelect = $pdo->prepare($sqlLvSelect);
+    $stmtLvSelect->execute([$id]);
+    $selectedLevels = $stmtLvSelect->fetchAll(PDO::FETCH_COLUMN,1);
+
 } catch (PDOException $e) {
     echo "錯誤: {{$e->getMessage()}}";
     exit;
 }
 
 
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -474,38 +474,34 @@ try {
                                     </div>
                                 </div>
 
-
-                                <div class="d-flex align-items-center mb-3">
-                                    <label class="form-label me-3 mb-0" style="min-width: 80px;">會員限制</label>
-
-                                    <!-- Checkbox 群組 -->
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_all" value="all">
-                                        <label class="form-check-label" for="level_all">全部</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_normal" value="normal">
-                                        <label class="form-check-label" for="level_normal">一般會員</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="member-levels[]"
-                                            id="level_vip" value="vip">
-                                        <label class="form-check-label" for="level_vip">VIP會員</label>
+                                <div class="mb-3">
+                                    <label class="form-label">會員限制</label><br>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
+                                        <input type="checkbox" class="btn-check" id="member-btncheck"
+                                            name="member-levels[]" value="all">
+                                        <label class="btn btn-outline-primary rounded-pill"
+                                            for="member-btncheck">全部會員</label>
+                                        <?php foreach ($rowsLv as $rowLv): ?>
+                                            <input type="checkbox" class="btn-check" id="member-btncheck<?= $rowLv["id"] ?>"
+                                                name="member-levels[]" value="<?= $rowLv["id"] ?>" <?= in_array($rowLv["id"], $selectedLevels) ? "checked" : "" ?>>
+                                            <label class="btn btn-outline-primary rounded-pill"
+                                                for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">適用商品類別</label><br>
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
-                                        <input type="checkbox" class="btn-check" id="btncheck" name="@@@@@@">
-                                        <label class="btn btn-outline-primary rounded-pill" for="btncheck">全部類別</label>
-                                        <?php foreach ($rows as $i => $row): ?>
-                                            <input type="checkbox" class="btn-check" id="btncheck<?= $i ?>"
-                                                name="category[]">
+                                        <input type="checkbox" class="btn-check" id="category-btncheck"
+                                            name="category[]" value="all">
+                                        <label class="btn btn-outline-primary rounded-pill"
+                                            for="category-btncheck">全部類別</label>
+                                        <?php foreach ($rowsCate as $rowCate): ?>
+                                            <input type="checkbox" class="btn-check" id="category-btncheck<?= $rowCate["category_id"] ?>"
+                                                name="category[]" value="<?= $rowCate["category_id"] ?>" <?= in_array($rowCate["category_id"], $selectedCategories) ? "checked" : "" ?>>
                                             <label class="btn btn-outline-primary rounded-pill"
-                                                for="btncheck<?= $i ?>"><?= $row["category_name"] ?></label>
+                                                for="category-btncheck<?= $rowCate["category_id"] ?>"><?= $rowCate["category_name"] ?></label>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
@@ -541,7 +537,7 @@ try {
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠結束日期</span>
                                                 <input type="date" class="form-control input-date" name="end-at"
-                                                    value="<?= $row["end_at"] ?> ">
+                                                    value="<?= $row["end_at"] ?>">
                                             </div>
                                         </div>
                                     </div>

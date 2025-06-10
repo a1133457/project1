@@ -447,11 +447,11 @@ try {
                                         <input type="checkbox" class="btn-check" id="member-btncheck" name="member-levels[]"
                                             value="all">
                                         <label class="btn btn-outline-primary rounded-pill" for="member-btncheck">全部會員</label>
-                                        <?php foreach ($rowsLv as $iLv => $rowLv): ?>
-                                            <input type="checkbox" class="btn-check" id="member-btncheck<?= $iLv ?>"
+                                        <?php foreach ($rowsLv as $rowLv): ?>
+                                            <input type="checkbox" class="btn-check" id="member-btncheck<?= $rowLv["id"] ?>"
                                                 name="member-levels[]" value="<?= $rowLv["id"] ?>">
                                             <label class="btn btn-outline-primary rounded-pill"
-                                                for="member-btncheck<?= $iLv ?>"><?= $rowLv["name"] ?></label>
+                                                for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
@@ -463,11 +463,11 @@ try {
                                         <input type="checkbox" class="btn-check" id="category-btncheck" name="category[]"
                                             value="all">
                                         <label class="btn btn-outline-primary rounded-pill" for="category-btncheck">全部類別</label>
-                                        <?php foreach ($rowsCate as $iCate => $rowCate): ?>
-                                            <input type="checkbox" class="btn-check" id="category-btncheck<?= $iCate ?>"
+                                        <?php foreach ($rowsCate as $rowCate): ?>
+                                            <input type="checkbox" class="btn-check" id="category-btncheck<?= $rowCate["category_id"] ?>"
                                                 name="category[]" value="<?= $rowCate["category_id"] ?>">
                                             <label class="btn btn-outline-primary rounded-pill"
-                                                for="category-btncheck<?= $iCate ?>"><?= $rowCate["category_name"] ?></label>
+                                                for="category-btncheck<?= $rowCate["category_id"] ?>"><?= $rowCate["category_name"] ?></label>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>

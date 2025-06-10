@@ -12,6 +12,7 @@ DESC `user_coupons`;
 
 SELECT * FROM `coupons`;
 SELECT * FROM `coupon_categories`;
+SELECT * FROM `coupon_levels`;
 
 
 CREATE TABLE coupons (

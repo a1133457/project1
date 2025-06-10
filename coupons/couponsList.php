@@ -17,9 +17,6 @@ $values = [];
 
 // 排序
 $order = $_GET["order"] ?? "asc";
-
-
-
 $orderSQL = "ORDER BY :order DESC ";
 
 
@@ -34,7 +31,7 @@ if ($search == "") {
     $values["search"] = "%$search%";
 }
 
-// 日期要修改
+// 日期
 $date1 = $_GET["date1"] ?? "";
 $date2 = $_GET["date2"] ?? "";
 $dateSQL = "";
@@ -59,9 +56,6 @@ if ($date1 != "" && $date2 != "") {
     $dateSQL = "(`start_at` <= :endDateTime) AND";
     $values["endDateTime"] = $endDateTime;
 }
-
-
-
 
 
 
@@ -477,8 +471,21 @@ $totalPage = ceil($couponLength / $perPage);
                     <h1 class="h3 mb-2 text-gray-800">優惠券管理系統</h1>
                     <a href="./insert.php" class="btn btn-primary btn-sm mb-2">新增優惠券</a>
 
+                    <div class="btn-group">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Small button
+                        </button>
+                        <ul class="dropdown-menu">
+                            ...
+                        </ul>
+                    </div>
 
+
+                    <!-- 搜尋 -->
                     <div class="d-flex align-items-center gap-8 justify-content-end mr-4 mb-3">
+
+
                         <form class="input-group w-250 mr-4 d-flex">
                             <input name="search" type="text" class="form-control form-control-sm"
                                 placeholder="搜尋優惠券名稱或優惠碼">
@@ -486,15 +493,13 @@ $totalPage = ceil($couponLength / $perPage);
                                     class="fa-solid fa-magnifying-glass"></i></button>
                         </form>
 
-                        <!-- <input name="search" type="text" class="form-control form-control-sm"
-                                placeholder="搜尋優惠券名稱或優惠碼">
-                            <button class="btn btn-sm btn-search" type="button"><i
-                                    class="fa-solid fa-magnifying-glass"></i></button> -->
-
+                        <!-- 搜尋日期 -->
                         <span>有效日期範圍</span>
-                        <input name="date1" type="date" class="form-control input-date form-control-sm w-150" value="<?= $_GET["date1"] ?? ""?>">
+                        <input name="date1" type="date" class="form-control input-date form-control-sm w-150"
+                            value="<?= $_GET["date1"] ?? "" ?>">
                         <span> ~ </span>
-                        <input name="date2" type="date" class="form-control input-date form-control-sm w-150" value="<?= $_GET["date2"] ?? ""?>">
+                        <input name="date2" type="date" class="form-control input-date form-control-sm w-150"
+                            value="<?= $_GET["date2"] ?? "" ?>">
                     </div>
 
                     <!-- 優惠券列表 -->
@@ -519,7 +524,9 @@ $totalPage = ceil($couponLength / $perPage);
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th><a href="./couponsList.php?order={$order}" class="a-reset">index&nbsp;&nbsp;<i class="fa-solid fa-sort-up"></i></a></th>
+                                            <th><a href="./couponsList.php?order={$order}"
+                                                    class="a-reset">index&nbsp;&nbsp;<i
+                                                        class="fa-solid fa-sort-up"></i></a></th>
                                             <th>名稱&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>折扣碼</th>
                                             <th>最低消費門檻&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
@@ -563,10 +570,9 @@ $totalPage = ceil($couponLength / $perPage);
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-
                                 </table>
-
                             </div>
+
                             <div class="d-flex mt-3 mb-2 justify-content-between align-items-center">
                                 <div>顯示第 <?= $pageStart + 1 ?> 到第 <?= $endNumber ?> 筆，共 <?= $couponLength ?> 筆資料</div>
                                 <ul class="pagination pagination-sm justify-content-center mb-1">
