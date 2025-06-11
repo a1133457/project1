@@ -23,24 +23,45 @@ table.dataTable>thead>tr>td:not(.sorting_disabled) {
   padding-right: 13px !important;
 }
 
+tbody tr:nth-of-type(odd) {
+  background-color: #f9fcf5;
+}
+
+
 .btn-del {
   background: none;
-  margin-left: 12px;
   border: none;
   padding: 0;
   cursor: pointer;
   color: inherit;
+  font-size: 0.95rem;
 
   &:hover {
-    color: #6a6e66;
+    color: #cf847e;
   }
 }
 
-.a-edit {
+.btn-view {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   color: inherit;
+  font-size: 0.92rem;
 
   &:hover {
-    color: #6a6e66;
+    color: #6a84d2;
+  }
+}
+
+
+.a-edit {
+  color: inherit;
+  margin: 0 10px;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: #82ad57;
   }
 }
 
@@ -54,6 +75,110 @@ table.dataTable>thead>tr>td:not(.sorting_disabled) {
     text-decoration: none;
   }
 }
+
+.date-status {
+  display: inline-block;
+  padding: 0.15em 0.75em;
+  border-radius: 999px;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.date-active {
+  background-color: #cbefdd;
+  color: #48956f;
+}
+
+.date-pending {
+  background-color: #ebebeb;
+}
+
+.date-expired {
+  background-color: #f4dbd5;
+  color: #b7705f;
+}
+
+.modal-header {
+  padding: 0;
+  padding-bottom: 10px;
+}
+
+.custom-coupon-bg {
+  background: url("../img/couponbg.png") no-repeat center center;
+  background-size: contain;
+  background-color: transparent !important;
+  /* 把白底取消 */
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 376px;
+}
+
+.custom-modal-dialog {
+  max-width: 740px;
+  /* 圖片寬度 */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.coupon-text-area {
+  max-width: 528px;
+  width: 100%;
+}
+
+.badge {
+  font-size: 87%;
+  padding: .35em .6em;
+  font-weight: 500;
+}
+
+
+.badge-green {
+    color: #fff;
+    background-color: #719a8b;
+}
+
+.badge-blue {
+    color: #fff;
+    background-color: #718bc5;
+}
+
+
+.btn-outline-secondary {
+    color: #75ab97;
+    border-color: #75ab97;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #75ab97;
+    color: white; 
+}
+
+.btn-check:checked + .btn-outline-secondary,
+.btn-outline-secondary.active {
+    background-color: #75ab97; 
+    color: white; 
+    border-color: #75ab97;
+}
+
+
+.btn-outline-primary {
+    color: #7593d5; 
+    border-color: #7593d5; 
+}
+
+.btn-outline-primary:hover {
+    background-color: #7593d5; 
+    color: white; 
+}
+
+.btn-check:checked + .btn-outline-primary,
+.btn-outline-primary.active {
+    background-color: #7593d5; 
+    color: white; 
+    border-color: #7593d5;
+}
+
 
 
 
@@ -111,4 +236,8 @@ table.dataTable>thead>tr>td:not(.sorting_disabled) {
 
 .gap-8 {
   gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
 }

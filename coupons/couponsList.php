@@ -15,9 +15,27 @@ $values = [];
 //     $values = ["cid" => $cid];
 // }
 
+//會員
+$memberLevel = $_GET["member_level"] ?? "";
+// 商品
+$category = $_GET["category"] ?? "";
+
 // 排序
-$order = $_GET["order"] ?? "asc";
-$orderSQL = "ORDER BY :order DESC ";
+// 預設 ASC
+$order = $_GET['order'] ?? '';
+$orderDir = $_GET['orderDir'] ?? 'ASC';
+
+$orderFields = ['name', 'min_discount', 'max_amount', 'discount'];
+
+function getOrderQueryString($field, $order, $orderDir)
+{
+    $params = $_GET;
+    $params['order'] = $field;
+    $params['orderDir'] = ($order === $field && $orderDir === 'ASC') ? 'DESC' : 'ASC';
+    return http_build_query($params);
+}
+
+
 
 
 // 搜尋
@@ -60,18 +78,51 @@ if ($date1 != "" && $date2 != "") {
 
 
 
+
 $perPage = 10;
 $page = intval($_GET["page"] ?? 1);
 $pageStart = ($page - 1) * $perPage;
 
 
+$sqlMember = "";
+if ($memberLevel !== "") {
+    $sqlMember = "`id` IN (SELECT coupon_id FROM coupon_levels WHERE level_id = :memberLevel) AND ";
+    $values["memberLevel"] = $memberLevel;
+}
 
-// $sql = "SELECT * FROM `coupons` WHERE `is_valid` = 1 LIMIT $perPage OFFSET $pageStart";
-$sql = "SELECT * FROM `coupons` WHERE $searchSQL $dateSQL `is_valid` = 1 LIMIT $perPage OFFSET $pageStart";
-$sqlAll = "SELECT * FROM `coupons` WHERE `is_valid` = 1";
-// $sql = "SELECT * FROM `coupons` WHERE $cateSQL $searchSQL  $dateSQL (`end_at` IS NULL OR `end_at` > NOW()) LIMIT $perPage OFFSET $pageStart";
-// $sqlAll = "SELECT * FROM `coupons` WHERE $cateSQL $searchSQL $dateSQL (`end_at` IS NULL OR `end_at` > NOW())";
-// $sqlCate = "SELECT * FROM `category` ";
+$sqlCategory = "";
+if ($category !== "") {
+    $sqlCategory = "`id` IN (SELECT coupon_id FROM coupon_categories WHERE category_id = :category) AND ";
+    $values["category"] = $category;
+}
+
+$mapSelectedCategories = [];
+$mapSelectedLevels = [];
+
+
+$sql = "SELECT * FROM `coupons` WHERE $sqlCategory $sqlMember $searchSQL $dateSQL `is_valid` = 1";
+// 總頁數
+$sqlAll = "SELECT * FROM `coupons` WHERE $sqlCategory $sqlMember $searchSQL $dateSQL `is_valid` = 1";
+$sqlCate = "SELECT * FROM `products_category`";
+$sqlLv = "SELECT * FROM `member_levels`";
+
+$sqlCateSelect = "SELECT `coupon_id`, `category_id` FROM `coupon_categories` WHERE `coupon_id` = ?";
+$sqlLvSelect = "SELECT `coupon_id`, `level_id` FROM `coupon_levels` WHERE `coupon_id` = ?";
+
+$allowedColumns = ['name', 'min_discount', 'max_amount', 'discount'];
+
+if (!empty($order) && !empty($orderDir)) {
+    if (in_array($order, $allowedColumns) && in_array($orderDir, ['ASC', 'DESC'])) {
+        if ($order === 'max_amount') {
+            $sql .= " ORDER BY COALESCE(`$order`, 999999) $orderDir";
+        } else {
+            $sql .= " ORDER BY `$order` $orderDir";
+        }
+    }
+}
+
+
+$sql .= " LIMIT $perPage OFFSET $pageStart";
 
 
 try {
@@ -79,14 +130,27 @@ try {
     $stmt->execute($values);
     $rows = $stmt->fetchAll();
 
-    // $stmtCate = $pdo->prepare($sqlCate);
-    // $stmtCate->execute();
-    // $rowsCate = $stmtCate->fetchAll();
-
     $stmtAll = $pdo->prepare($sqlAll);
-    $stmtAll->execute();
+    $stmtAll->execute($values);
     $couponLength = $stmtAll->rowCount();
 
+    $stmtCate = $pdo->prepare($sqlCate);
+    $stmtCate->execute();
+    $rowsCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtLv = $pdo->prepare($sqlLv);
+    $stmtLv->execute();
+    $rowsLv = $stmtLv->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row) {
+        $stmtCateSelect = $pdo->prepare($sqlCateSelect);
+        $stmtCateSelect->execute([$row['id']]);
+        $mapSelectedCategories[$row['id']] = $stmtCateSelect->fetchAll(PDO::FETCH_COLUMN, 1);
+
+        $stmtLvSelect = $pdo->prepare($sqlLvSelect);
+        $stmtLvSelect->execute([$row['id']]);
+        $mapSelectedLevels[$row['id']] = $stmtLvSelect->fetchAll(PDO::FETCH_COLUMN, 1);
+    }
 } catch (PDOException $e) {
     echo "錯誤: {{$e->getMessage()}}";
     exit;
@@ -94,6 +158,28 @@ try {
 
 $endNumber = min($pageStart + $perPage, $couponLength);
 $totalPage = ceil($couponLength / $perPage);
+
+// 商品名稱顯示
+$categoryName = "全部商品類別";
+if (isset($_GET["category"]) && $_GET["category"] !== "") {
+    foreach ($rowsCate as $cate) {
+        if ($cate["category_id"] == $_GET["category"]) {
+            $categoryName = $cate["category_name"];
+            break;
+        }
+    }
+}
+
+// 會員階級顯示
+$lvName = "全部會員階級";
+if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
+    foreach ($rowsLv as $lv) {
+        if ($lv["id"] == $_GET["member_level"]) {
+            $lvName = $lv["name"];
+            break;
+        }
+    }
+}
 
 ?>
 
@@ -468,38 +554,69 @@ $totalPage = ceil($couponLength / $perPage);
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">優惠券管理系統</h1>
-                    <a href="./insert.php" class="btn btn-primary btn-sm mb-2">新增優惠券</a>
-
-                    <div class="btn-group">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Small button
-                        </button>
-                        <ul class="dropdown-menu">
-                            ...
-                        </ul>
+                    <div class="d-flex justify-content-between">
+                        <h1 class="h3 text-gray-800 ml-3">優惠券管理系統</h1>
+                        <div class="mr-3">
+                            <a href="./insert.php" class="btn btn-primary btn-sm">新增優惠券</a>
+                        </div>
                     </div>
+                    <div class="d-flex align-items-center mb-3 justify-content-between">
+                        <div class="d-flex gap-12 ml-3">
+                            <a href="./couponsList.php" class="btn btn-secondary btn-sm">清除篩選 <i
+                                    class="fa-solid fa-rotate"></i></a>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                    data-toggle="dropdown">
+                                    <?= $lvName ?>
+                                </button>
+                                <ul class="dropdown-menu" id="member-level-dropdown">
+                                    <li>
+                                        <button type="button" class="dropdown-item" data-value="">全部會員</button>
+                                    </li>
+                                    <?php foreach ($rowsLv as $lv): ?>
+                                        <li>
+                                            <button type="button" class="dropdown-item"
+                                                data-value="<?= $lv["id"] ?>"><?= $lv["name"] ?></button>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                    data-toggle="dropdown">
+                                    <?= $categoryName ?>
+                                </button>
+                                <ul class="dropdown-menu" id="category-dropdown">
+                                    <li><button type="button" class="dropdown-item" data-value="">全部類別</button></li>
+                                    <?php foreach ($rowsCate as $cate): ?>
+                                        <li><button type="button" class="dropdown-item"
+                                                data-value="<?= $cate["category_id"] ?>"><?= $cate["category_name"] ?></button>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
 
+                        <div class="d-flex gap-8 mr-3 align-items-center">
+                            <!-- 搜尋日期 -->
+                            <span>有效日期範圍</span>
+                            <input id="input-date1" name="date1" type="date"
+                                class=" form-control input-date form-control-sm w-150"
+                                value="<?= $_GET["date1"] ?? "" ?>">
+                            <span> ~ </span>
+                            <input id="input-date2" name="date2" type="date"
+                                class="form-control input-date form-control-sm w-150"
+                                value="<?= $_GET["date2"] ?? "" ?>">
 
-                    <!-- 搜尋 -->
-                    <div class="d-flex align-items-center gap-8 justify-content-end mr-4 mb-3">
+                            <!-- 搜尋 -->
+                            <form class="input-group w-250 ml-4 d-flex">
+                                <input id="search-input" name="search" type="text" class="form-control form-control-sm"
+                                    placeholder="搜尋優惠券名稱或優惠碼">
+                                <button id="search-btn" type="button" class="btn btn-sm btn-search"><i
+                                        class="fa-solid fa-magnifying-glass"></i></button>
+                            </form>
+                        </div>
 
-
-                        <form class="input-group w-250 mr-4 d-flex">
-                            <input name="search" type="text" class="form-control form-control-sm"
-                                placeholder="搜尋優惠券名稱或優惠碼">
-                            <button type="submit" class="btn btn-sm btn-search"><i
-                                    class="fa-solid fa-magnifying-glass"></i></button>
-                        </form>
-
-                        <!-- 搜尋日期 -->
-                        <span>有效日期範圍</span>
-                        <input name="date1" type="date" class="form-control input-date form-control-sm w-150"
-                            value="<?= $_GET["date1"] ?? "" ?>">
-                        <span> ~ </span>
-                        <input name="date2" type="date" class="form-control input-date form-control-sm w-150"
-                            value="<?= $_GET["date2"] ?? "" ?>">
                     </div>
 
                     <!-- 優惠券列表 -->
@@ -524,14 +641,67 @@ $totalPage = ceil($couponLength / $perPage);
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th><a href="./couponsList.php?order={$order}"
-                                                    class="a-reset">index&nbsp;&nbsp;<i
-                                                        class="fa-solid fa-sort-up"></i></a></th>
-                                            <th>名稱&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
+                                            <th>index</th>
+
+                                            <th>
+                                                <a href="./couponsList.php?<?= getOrderQueryString('name', $order, $orderDir) ?>"
+                                                    class="a-reset">
+                                                    名稱&nbsp;&nbsp;
+                                                    <?php if ($order !== 'name'): ?>
+                                                        <i class="fa-solid fa-sort"></i>
+                                                    <?php elseif ($orderDir === 'ASC'): ?>
+                                                        <i class="fa-solid fa-sort-up"></i>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-sort-down"></i>
+                                                    <?php endif; ?>
+                                                </a>
+                                            </th>
+
+
                                             <th>折扣碼</th>
-                                            <th>最低消費門檻&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
-                                            <th>折扣</th>
-                                            <th>數量(張)&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
+
+                                            <th>
+                                                <a href="./couponsList.php?<?= getOrderQueryString('min_discount', $order, $orderDir) ?>"
+                                                    class="a-reset">
+                                                    最低折扣&nbsp;&nbsp;
+                                                    <?php if ($order !== 'min_discount'): ?>
+                                                        <i class="fa-solid fa-sort"></i>
+                                                    <?php elseif ($orderDir === 'ASC'): ?>
+                                                        <i class="fa-solid fa-sort-up"></i>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-sort-down"></i>
+                                                    <?php endif; ?>
+                                                </a>
+                                            </th>
+
+                                            <th>
+                                                <a href="./couponsList.php?<?= getOrderQueryString('discount', $order, $orderDir) ?>"
+                                                    class="a-reset">
+                                                    折扣&nbsp;&nbsp;
+                                                    <?php if ($order !== 'discount'): ?>
+                                                        <i class="fa-solid fa-sort"></i>
+                                                    <?php elseif ($orderDir === 'ASC'): ?>
+                                                        <i class="fa-solid fa-sort-up"></i>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-sort-down"></i>
+                                                    <?php endif; ?>
+                                                </a>
+                                            </th>
+
+                                            <th>
+                                                <a href="./couponsList.php?<?= getOrderQueryString('max_amount', $order, $orderDir) ?>"
+                                                    class="a-reset">
+                                                    數量&nbsp;&nbsp;
+                                                    <?php if ($order !== 'max_amount'): ?>
+                                                        <i class="fa-solid fa-sort"></i>
+                                                    <?php elseif ($orderDir === 'ASC'): ?>
+                                                        <i class="fa-solid fa-sort-up"></i>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-sort-down"></i>
+                                                    <?php endif; ?>
+                                                </a>
+                                            </th>
+
                                             <th>狀態</th>
                                             <th>有效期限&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
                                             <th>操作</th>
@@ -552,16 +722,20 @@ $totalPage = ceil($couponLength / $perPage);
                                                 </td>
                                                 <td><?php
                                                 if (!empty($row["end_at"]) && $row["end_at"] < date("Y-m-d H:i:s")) {
-                                                    echo "過期";
+                                                    echo "<span class='date-status date-expired'>過期</span>";
                                                 } else if (!empty($row["start_at"]) && $row["start_at"] > date("Y-m-d H:i:s")) {
-                                                    echo "未生效";
+                                                    echo "<span class='date-status date-pending'>未生效</span>";
                                                 } else {
-                                                    echo "啟用";
+                                                    echo "<span class='date-status date-active'>有效</span>";
                                                 } ?></td>
                                                 <td>
                                                     <?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天有效"; ?>
                                                 </td>
                                                 <td>
+                                                    <button type="button" class="btn-view" data-toggle="modal"
+                                                        data-target="#viewModal123<?= $row['id'] ?>">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </button>
                                                     <a class="a-edit" href="./update.php?id=<?= $row["id"] ?>"><i
                                                             class="fa-solid fa-pencil"></i></a>
                                                     <button class="btn-del" data-id="<?= $row["id"] ?>"><i
@@ -599,7 +773,85 @@ $totalPage = ceil($couponLength / $perPage);
                 </div>
                 <!-- /.container-fluid -->
 
+
+                <!-- Modal 結構 -->
+                <?php foreach ($rows as $index => $row): ?>
+                    <?php
+                    $selectedCategories = $mapSelectedCategories[$row['id']] ?? [];
+                    $selectedLevels = $mapSelectedLevels[$row['id']] ?? [];
+                    ?>
+                    <div class="modal fade" id="viewModal123<?= $row['id'] ?>" tabindex="-1" role="dialog">
+                        <div class="modal-dialog  modal-dialog-centered custom-modal-dialog" role="document">
+                            <div class="modal-content custom-coupon-bg">
+
+
+                                <div class="modal-body d-flex justify-content-end align-items-center">
+                                    <div class="coupon-text-area">
+                                        <div class="modal-header mb-3">
+                                            <h5 class="modal-title" id="viewModalLabel">優惠券詳情</h5>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                優惠券名稱：<?= $row["name"] ?>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                折扣碼：<?= $row["code"] ?>
+                                            </div>
+                                            <div class="col">
+                                                折扣內容：<?= $row["discount_type"] == 1 ? "$ " . (int) $row['discount'] : ($row['discount'] * 100) . " %"; ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                最低消費金額：<?= "$ " . $row["min_discount"] ?>
+                                            </div>
+                                            <div class="col">
+                                                發行數量：<?= $row["max_amount"] === null ? "∞" : $row['max_amount']; ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                會員限制：
+                                                <?php foreach ($rowsLv as $rowLv): ?>
+                                                    <span class="badge badge-green"><?= in_array($rowLv["id"], $selectedLevels) ? $rowLv['name'] : "" ?></span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                適用商品類別：
+                                                <?php foreach ($rowsCate as $rowCate): ?>
+                                                    <span class="badge badge-blue"><?= in_array($rowCate["category_id"], $selectedCategories) ? $rowCate['category_name'] : "" ?></span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                有效期限：<?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天有效"; ?>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                建立時間：<?= $row["created_at"] ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
             </div>
+
+
             <!-- End of Main Content -->
 
             <!-- Footer -->
@@ -623,25 +875,7 @@ $totalPage = ceil($couponLength / $perPage);
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 
     <!-- Bootstrap core JavaScript-->

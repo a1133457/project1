@@ -479,12 +479,12 @@ try {
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
                                         <input type="checkbox" class="btn-check" id="member-btncheck"
                                             name="member-levels[]" value="all">
-                                        <label class="btn btn-outline-primary rounded-pill"
+                                        <label class="btn btn-outline-secondary rounded-pill"
                                             for="member-btncheck">全部會員</label>
                                         <?php foreach ($rowsLv as $rowLv): ?>
                                             <input type="checkbox" class="btn-check" id="member-btncheck<?= $rowLv["id"] ?>"
                                                 name="member-levels[]" value="<?= $rowLv["id"] ?>" <?= in_array($rowLv["id"], $selectedLevels) ? "checked" : "" ?>>
-                                            <label class="btn btn-outline-primary rounded-pill"
+                                            <label class="btn btn-outline-secondary rounded-pill"
                                                 for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
                                         <?php endforeach; ?>
                                     </div>
