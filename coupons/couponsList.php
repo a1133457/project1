@@ -326,9 +326,9 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
 
             <!-- Nav Item - Tables -->
             <li class="nav-item active">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
+                <a class="nav-link" href="./couponsList.php">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>優惠券管理</span></a>
             </li>
 
             <!-- Divider -->
@@ -554,18 +554,19 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-1">
                         <h1 class="h3 text-gray-800 ml-3">優惠券管理系統</h1>
                         <div class="mr-3">
-                            <a href="./insert.php" class="btn btn-primary btn-sm">新增優惠券</a>
+                            <a href="./insert.php" class="btn btn-info btn-sm">新增優惠券&nbsp;&nbsp;<i
+                                    class="fa-solid fa-plus"></i></a>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center mb-3 justify-content-between">
+                    <div class="d-flex align-items-center mb-3 justify-content-between flex-wrap">
                         <div class="d-flex gap-12 ml-3">
-                            <a href="./couponsList.php" class="btn btn-secondary btn-sm">清除篩選 <i
+                            <a href="./couponsList.php" class="btn btn-secondary btn-sm">清除篩選&nbsp;&nbsp;<i
                                     class="fa-solid fa-rotate"></i></a>
                             <div class="btn-group">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
                                     data-toggle="dropdown">
                                     <?= $lvName ?>
                                 </button>
@@ -582,7 +583,7 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                 </ul>
                             </div>
                             <div class="btn-group">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
                                     data-toggle="dropdown">
                                     <?= $categoryName ?>
                                 </button>
@@ -606,7 +607,7 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                             <span> ~ </span>
                             <input id="input-date2" name="date2" type="date"
                                 class="form-control input-date form-control-sm w-150"
-                                value="<?= $_GET["date2"] ?? "" ?>">
+                                value="<?= $_GET["date2"] ?? "" ?>" min="<?= $_GET["date1"] ?? "" ?>">
 
                             <!-- 搜尋 -->
                             <form class="input-group w-250 ml-4 d-flex">
@@ -703,7 +704,20 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                             </th>
 
                                             <th>狀態</th>
-                                            <th>有效期限&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th>
+                                            <th> 
+                                                <a href="./couponsList.php?<?= getOrderQueryString('max_amount', $order, $orderDir) ?>"
+                                                    class="a-reset">
+                                                    有效期限&nbsp;&nbsp;
+                                                    <?php if ($order !== 'max_amount'): ?>
+                                                        <i class="fa-solid fa-sort"></i>
+                                                    <?php elseif ($orderDir === 'ASC'): ?>
+                                                        <i class="fa-solid fa-sort-up"></i>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-sort-down"></i>
+                                                    <?php endif; ?>
+                                                </a>
+                                            </th>
+                                            <!-- <th>有效期限&nbsp;&nbsp;<i class="fa-solid fa-sort"></i></th> -->
                                             <th>操作</th>
                                         </tr>
                                     </thead>
@@ -729,7 +743,7 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                                     echo "<span class='date-status date-active'>有效</span>";
                                                 } ?></td>
                                                 <td>
-                                                    <?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天有效"; ?>
+                                                    <?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天內有效"; ?>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn-view" data-toggle="modal"
@@ -817,7 +831,8 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                             <div class="col">
                                                 會員限制：
                                                 <?php foreach ($rowsLv as $rowLv): ?>
-                                                    <span class="badge badge-green"><?= in_array($rowLv["id"], $selectedLevels) ? $rowLv['name'] : "" ?></span>
+                                                    <span
+                                                        class="badge badge-green"><?= in_array($rowLv["id"], $selectedLevels) ? $rowLv['name'] : "" ?></span>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
@@ -826,14 +841,15 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                             <div class="col">
                                                 適用商品類別：
                                                 <?php foreach ($rowsCate as $rowCate): ?>
-                                                    <span class="badge badge-blue"><?= in_array($rowCate["category_id"], $selectedCategories) ? $rowCate['category_name'] : "" ?></span>
+                                                    <span
+                                                        class="badge badge-blue"><?= in_array($rowCate["category_id"], $selectedCategories) ? $rowCate['category_name'] : "" ?></span>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
 
                                         <div class="row mb-2">
                                             <div class="col">
-                                                有效期限：<?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天有效"; ?>
+                                                有效期限：<?= $row["valid_days"] === null ? "{$row['start_at']} ~ {$row['end_at']}" : "領取後 {$row['valid_days']} 天內有效"; ?>
                                             </div>
                                         </div>
                                         <div class="row mb-2">

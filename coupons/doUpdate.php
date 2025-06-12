@@ -143,7 +143,5 @@ try {
   exit;
 }
 
-echo "更新資料成功";
-timeoutGoBack(500);
-
+alertGoBack("更新優惠券成功");
 

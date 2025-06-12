@@ -16,6 +16,8 @@ const categoryDropdownItems = document.querySelectorAll("#category-dropdown .dro
 
 
 
+
+
 // 這邊的都要記得用事件監聽!!! 因為表格會重劃
 
 
@@ -39,9 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('click', function (event) {
     if (event.target.closest('.btn-del')) {
         const btn = event.target.closest('.btn-del');
-        window.location.href = `doDelete.php?id=${btn.dataset.id}`;
+        if (confirm('確定要刪除嗎?')) {
+            window.location.href = `doDelete.php?id=${btn.dataset.id}`;
+        }
+
     }
 });
+
 
 
 // 會員篩選
@@ -67,7 +73,7 @@ memberDropdownItems.forEach(item => {
 // 商品篩選
 categoryDropdownItems.forEach(item => {
     item.addEventListener("click", function (e) {
-        const value = this.getAttribute("data-value"); 
+        const value = this.getAttribute("data-value");
         const url = new URL(window.location.href);     // 取得目前網址
         const params = url.searchParams;               // 所有參數
 
@@ -108,8 +114,10 @@ inputDate.forEach(input => {
     });
 });
 
-// !日期搜尋
 
+
+
+// !日期搜尋
 inputDate1.addEventListener("change", autoSearch);
 inputDate2.addEventListener("change", autoSearch);
 
@@ -121,9 +129,6 @@ function autoSearch() {
     url.searchParams.set("date2", date2);      // 設定 / 更新 date2
     window.location.href = url.toString();     // 跳轉新網址
 }
-
-
-
 
 
 

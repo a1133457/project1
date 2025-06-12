@@ -15,12 +15,12 @@ function alertGoBack($msg=""){
   </script>";
 }
 
-function alertGoTo($msg="", $url= "./pageMsgsList.php"){
+function confirmGoBack($msg=""){
   echo "<script>
-    alert('$msg');
-    window.location = '$url';
+    window.location = './couponsList.php';
   </script>";
 }
+
 
 // 有預設值的參數要往最後放
 function timeoutGoBack($time=1000){

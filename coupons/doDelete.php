@@ -12,8 +12,9 @@ $sql = "UPDATE `coupons` SET `is_valid` = 0 WHERE `id` = ?";
 try {
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$id]);
+  confirmGoBack();
 } catch (PDOException $e) {
-  echo "錯誤: {{$e->getMessage()}}";
+  echo "錯誤: {$e->getMessage()}";
   exit;
 }
-alertGoBack("刪除資料成功");
+

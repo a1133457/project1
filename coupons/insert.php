@@ -159,9 +159,9 @@ try {
 
             <!-- Nav Item - Tables -->
             <li class="nav-item active">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
+                <a class="nav-link" href="./couponsList.php">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>優惠券管理</span></a>
             </li>
 
             <!-- Divider -->
@@ -444,11 +444,11 @@ try {
                                 <div class="mb-3">
                                     <label class="form-label">會員限制</label><br>
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
-                                        <input type="checkbox" class="btn-check" id="member-btncheck" name="member-levels[]"
-                                            value="all">
+                                        <input type="checkbox" class="btn-check btn-all-lv" id="member-btncheck" name="member-levels[]"
+                                            value="all" checked>
                                         <label class="btn btn-outline-secondary rounded-pill" for="member-btncheck">全部會員</label>
                                         <?php foreach ($rowsLv as $rowLv): ?>
-                                            <input type="checkbox" class="btn-check" id="member-btncheck<?= $rowLv["id"] ?>"
+                                            <input type="checkbox" class="btn-check btn-other-lv" id="member-btncheck<?= $rowLv["id"] ?>"
                                                 name="member-levels[]" value="<?= $rowLv["id"] ?>">
                                             <label class="btn btn-outline-secondary rounded-pill"
                                                 for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
@@ -460,11 +460,11 @@ try {
                                 <div class="mb-3">
                                     <label class="form-label">適用商品類別</label><br>
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
-                                        <input type="checkbox" class="btn-check" id="category-btncheck" name="category[]"
-                                            value="all">
+                                        <input type="checkbox" class="btn-check btn-all-cate" id="category-btncheck" name="category[]"
+                                            value="all" checked>
                                         <label class="btn btn-outline-primary rounded-pill" for="category-btncheck">全部類別</label>
                                         <?php foreach ($rowsCate as $rowCate): ?>
-                                            <input type="checkbox" class="btn-check" id="category-btncheck<?= $rowCate["category_id"] ?>"
+                                            <input type="checkbox" class="btn-check btn-other-cate" id="category-btncheck<?= $rowCate["category_id"] ?>"
                                                 name="category[]" value="<?= $rowCate["category_id"] ?>">
                                             <label class="btn btn-outline-primary rounded-pill"
                                                 for="category-btncheck<?= $rowCate["category_id"] ?>"><?= $rowCate["category_name"] ?></label>
@@ -497,7 +497,7 @@ try {
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠開始日期</span>
                                                 <input type="date" class="form-control input-date" name="start-at"
-                                                    min="<?= date('Y-m-d') ?>">
+                                                    >
                                             </div>
                                         </div>
                                         <div class="col-md-6">
