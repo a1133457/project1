@@ -4,9 +4,12 @@
   --cardhead:#a0a599;
 } */
 
+.h6, h6 {
+    font-size: 1.1rem;
+}
+
 .bg-menu {
   background-color: #719a8b;
-  ;
   background-size: cover;
 }
 

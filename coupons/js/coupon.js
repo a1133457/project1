@@ -125,8 +125,10 @@ function autoSearch() {
     const date1 = inputDate1.value;
     const date2 = inputDate2.value;
     const url = new URL(window.location.href); // 取得當前網址
+    const params = url.searchParams;
     url.searchParams.set("date1", date1);      // 設定 / 更新 date1
     url.searchParams.set("date2", date2);      // 設定 / 更新 date2
+    params.set("page", 1);
     window.location.href = url.toString();     // 跳轉新網址
 }
 

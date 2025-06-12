@@ -3,17 +3,6 @@ require_once "./connect.php";
 
 $values = [];
 
-// $cid = isset($_GET["cid"]) ? $_GET["cid"] :0 ;
-
-// $cid = intval($_GET["cid"] ?? 0);
-
-// if ($cid == 0) {
-//     $cateSQL = "";
-//     $values = [];
-// } else {
-//     $cateSQL = "`category_id` = :cid AND";
-//     $values = ["cid" => $cid];
-// }
 
 //會員
 $memberLevel = $_GET["member_level"] ?? "";
@@ -25,7 +14,6 @@ $category = $_GET["category"] ?? "";
 $order = $_GET['order'] ?? '';
 $orderDir = $_GET['orderDir'] ?? 'ASC';
 
-$orderFields = ['name', 'min_discount', 'max_amount', 'discount'];
 
 function getOrderQueryString($field, $order, $orderDir)
 {
@@ -112,7 +100,14 @@ $sqlLvSelect = "SELECT `coupon_id`, `level_id` FROM `coupon_levels` WHERE `coupo
 $allowedColumns = ['name', 'min_discount', 'max_amount', 'discount'];
 
 if (!empty($order) && !empty($orderDir)) {
-    if (in_array($order, $allowedColumns) && in_array($orderDir, ['ASC', 'DESC'])) {
+    if ($order === 'date' && in_array($orderDir, ['ASC', 'DESC'])) {
+        $sql .= " ORDER BY 
+            CASE WHEN valid_days IS NULL THEN 0 ELSE 1 END ASC,
+            CASE 
+                WHEN valid_days IS NULL THEN UNIX_TIMESTAMP(`start_at`) 
+                ELSE valid_days
+            END $orderDir";
+    } elseif (in_array($order, $allowedColumns) && in_array($orderDir, ['ASC', 'DESC'])) {
         if ($order === 'max_amount') {
             $sql .= " ORDER BY COALESCE(`$order`, 999999) $orderDir";
         } else {
@@ -120,6 +115,7 @@ if (!empty($order) && !empty($orderDir)) {
         }
     }
 }
+
 
 
 $sql .= " LIMIT $perPage OFFSET $pageStart";
@@ -704,11 +700,11 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                             </th>
 
                                             <th>狀態</th>
-                                            <th> 
-                                                <a href="./couponsList.php?<?= getOrderQueryString('max_amount', $order, $orderDir) ?>"
+                                            <th>
+                                                <a href="./couponsList.php?<?= getOrderQueryString('date', $order, $orderDir) ?>"
                                                     class="a-reset">
                                                     有效期限&nbsp;&nbsp;
-                                                    <?php if ($order !== 'max_amount'): ?>
+                                                    <?php if ($order !== 'date'): ?>
                                                         <i class="fa-solid fa-sort"></i>
                                                     <?php elseif ($orderDir === 'ASC'): ?>
                                                         <i class="fa-solid fa-sort-up"></i>
@@ -768,14 +764,18 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
                                         <li class="page-item <?= $page == ($i) ? "active" : "" ?>">
                                             <?php
                                             $link = "./couponsList.php?page={$i}";
-                                            // if ($cid > 0)
-                                            //     $link .= "&cid={$cid}";
-                                            if ($searchType != "")
-                                                $link .= "&search={$search}&qType={$searchType}";
+                                            if ($search != "")
+                                                $link .= "&search={$search}";
                                             if ($date1 != "")
                                                 $link .= "&date1={$date1}";
                                             if ($date2 != "")
                                                 $link .= "&date2={$date2}";
+                                            if ($category != "")
+                                                $link .= "&category={$category}";
+                                            if ($memberLevel != "")
+                                                $link .= "&member_level={$memberLevel}";
+                                            if ($order != "")
+                                                $link .= "&order={$order}&orderDir={$orderDir}";
                                             ?>
                                             <a class="page-link" href="<?= $link ?>"><?= $i ?></a>
                                         </li>
