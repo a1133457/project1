@@ -226,20 +226,6 @@ try {
                         </button>
                     </form>
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -432,7 +418,7 @@ try {
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">名稱</span>
                                     <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱"
-                                        value="<?= $row["name"] ?>">
+                                        value="<?= $row["name"] ?>" minlength="3" maxlength="30" title="請輸入 3~30 字的優惠券名稱">
                                 </div>
 
                                 <!-- 折扣碼與折扣金額 -->
@@ -441,7 +427,7 @@ try {
                                         <div class="input-group">
                                             <span class="input-group-text">折扣碼</span>
                                             <input required name="code" type="text" class="form-control"
-                                                value="<?= $row["code"] ?>">
+                                                value="<?= $row["code"] ?>"  minlength="5" maxlength="12" title="請輸入 4~12 字母或數字" readonly>
                                         </div>
                                     </div>
 
@@ -535,25 +521,26 @@ try {
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠開始日期</span>
-                                                <input type="date" class="form-control input-date" name="start-at"
-                                                    min="<?= date('Y-m-d') ?>" value="<?= $row["start_at"] ?>">
+                                                <input type="date" class="form-control input-date start-at" name="start-at"
+                                                     value="<?= $row["start_at"] ?>">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠結束日期</span>
-                                                <input type="date" class="form-control input-date" name="end-at"
+                                                <input type="date" class="form-control input-date end-at" name="end-at"
                                                     value="<?= $row["end_at"] ?>">
                                             </div>
                                         </div>
                                     </div>
+                                    
 
                                     <!-- 領取後幾天區塊 -->
                                     <div id="relative_section" class="mb-4 d-none">
                                         <div class="input-group">
                                             <span class="input-group-text">領取後</span>
                                             <input type="number" class="form-control valid-days" name="valid-days"
-                                                min="1" max="1000" placeholder="請輸入有效天數"
+                                                min="1" placeholder="請輸入有效天數"
                                                 value="<?= $row["valid_days"] ?>">
                                             <span class="input-group-text">天內有效</span>
                                         </div>

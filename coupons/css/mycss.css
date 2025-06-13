@@ -299,6 +299,21 @@ tbody tr:nth-of-type(odd) {
 }
 
 
+.input-group-btn {
+    display: flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #fdfff8;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #71b9c4;
+    border: 1px solid #d1d3e2;
+    border-radius: .35rem;
+  }
 
 
 

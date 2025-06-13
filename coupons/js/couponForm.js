@@ -15,6 +15,12 @@ const btnOtherLv = document.querySelectorAll(".btn-other-lv");
 const btnAllCate = document.querySelector(".btn-all-cate");
 const btnOtherCate = document.querySelectorAll(".btn-other-cate");
 
+const startAt = document.querySelector(".start-at");
+const endAt = document.querySelector(".end-at");
+
+const inputGroupBtn = document.querySelector(".input-group-btn");
+const couponCode = document.querySelector("#coupon-code");
+
 
 document.addEventListener("DOMContentLoaded", () => {
     updateSections();
@@ -74,7 +80,27 @@ btnOtherCate.forEach(cb => {
     });
 });
 
+if (inputGroupBtn) {
+    inputGroupBtn.addEventListener("click", () => {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let codeValue = "";
+        const codeLength = 8;
 
+        for (let i = 0; i < codeLength; i++) {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            codeValue += chars[randomIndex];
+        }
+
+        couponCode.value = codeValue;
+    });
+};
+
+
+
+//月曆結束日期 不可大於開始日期
+startAt.addEventListener("input", function () {
+    endAt.min = this.value
+});
 
 // 點月曆文字 也會跑出月曆來
 inputDate.forEach(input => {

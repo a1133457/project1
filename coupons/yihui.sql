@@ -61,7 +61,6 @@ CREATE TABLE user_coupons (
 
 
 
-
 DROP TABLE `coupons`;
 DROP TABLE `coupon_levels`;
 DROP TABLE `coupon_categories`;
@@ -100,3 +99,5 @@ INSERT INTO `member_levels` (name) VALUES
 ('森林會員');
 
 SELECT * FROM `member_levels`;
+
+

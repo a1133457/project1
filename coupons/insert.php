@@ -198,20 +198,6 @@ try {
                         </button>
                     </form>
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -403,7 +389,7 @@ try {
                             <form action="./doInsert.php" method="post">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">名稱</span>
-                                    <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱">
+                                    <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱" minlength="3" maxlength="30" title="請輸入 3~30 字的優惠券名稱">
                                 </div>
 
                                 <!-- 折扣碼與折扣金額 -->
@@ -411,7 +397,8 @@ try {
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <span class="input-group-text">折扣碼</span>
-                                            <input required name="code" type="text" class="form-control">
+                                            <input required name="code" type="text" class="form-control" minlength="5" maxlength="12" title="請輸入 4~12 字母或數字" id="coupon-code">
+                                            <button type="button" class="input-group-btn" title="自動產生折扣碼"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
                                         </div>
                                     </div>
 
@@ -503,14 +490,14 @@ try {
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠開始日期</span>
-                                                <input type="date" class="form-control input-date" name="start-at"
+                                                <input type="date" class="form-control input-date start-at" name="start-at"
                                                     >
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠結束日期</span>
-                                                <input type="date" class="form-control input-date" name="end-at">
+                                                <input type="date" class="form-control input-date end-at" name="end-at">
                                             </div>
                                         </div>
                                     </div>
@@ -520,7 +507,7 @@ try {
                                         <div class="input-group">
                                             <span class="input-group-text">領取後</span>
                                             <input type="number" class="form-control" name="valid-days" min="1"
-                                                max="1000" placeholder="請輸入有效天數">
+                                                 placeholder="請輸入有效天數">
                                             <span class="input-group-text">天內有效</span>
                                         </div>
                                     </div>
