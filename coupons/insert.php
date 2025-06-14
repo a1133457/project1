@@ -67,13 +67,12 @@ try {
         <!-- Sidebar -->
         <ul class="navbar-nav bg-menu sidebar sidebar-dark accordion" id="accordionSidebar">
 
+            <!-- new -->
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+            <a class="d-flex justify-content-center my-5" href="index.html">
+                <img src="../img/Oakly-logo.png" alt="Oakly" class="logo">
             </a>
+            <!-- new end -->
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -389,7 +388,8 @@ try {
                             <form action="./doInsert.php" method="post">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">名稱</span>
-                                    <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱" minlength="3" maxlength="30" title="請輸入 3~30 字的優惠券名稱">
+                                    <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱"
+                                        minlength="3" maxlength="30" title="請輸入 3~30 字的優惠券名稱">
                                 </div>
 
                                 <!-- 折扣碼與折扣金額 -->
@@ -397,8 +397,10 @@ try {
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <span class="input-group-text">折扣碼</span>
-                                            <input required name="code" type="text" class="form-control" minlength="5" maxlength="12" title="請輸入 4~12 字母或數字" id="coupon-code">
-                                            <button type="button" class="input-group-btn" title="自動產生折扣碼"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                                            <input required name="code" type="text" class="form-control" minlength="5"
+                                                maxlength="12" title="請輸入 4~12 字母或數字" id="coupon-code">
+                                            <button type="button" class="input-group-btn" title="自動產生折扣碼"><i
+                                                    class="fa-solid fa-wand-magic-sparkles"></i></button>
                                         </div>
                                     </div>
 
@@ -438,12 +440,14 @@ try {
                                 <div class="mb-3">
                                     <label class="form-label">會員限制</label><br>
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
-                                        <input type="checkbox" class="btn-check btn-all-lv" id="member-btncheck" name="member-levels[]"
-                                            value="all" checked>
-                                        <label class="btn btn-outline-secondary rounded-pill" for="member-btncheck">全部會員</label>
+                                        <input type="checkbox" class="btn-check btn-all-lv" id="member-btncheck"
+                                            name="member-levels[]" value="all" checked>
+                                        <label class="btn btn-outline-secondary rounded-pill"
+                                            for="member-btncheck">全部會員</label>
                                         <?php foreach ($rowsLv as $rowLv): ?>
-                                            <input type="checkbox" class="btn-check btn-other-lv" id="member-btncheck<?= $rowLv["id"] ?>"
-                                                name="member-levels[]" value="<?= $rowLv["id"] ?>">
+                                            <input type="checkbox" class="btn-check btn-other-lv"
+                                                id="member-btncheck<?= $rowLv["id"] ?>" name="member-levels[]"
+                                                value="<?= $rowLv["id"] ?>">
                                             <label class="btn btn-outline-secondary rounded-pill"
                                                 for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
                                         <?php endforeach; ?>
@@ -454,12 +458,14 @@ try {
                                 <div class="mb-3">
                                     <label class="form-label">適用商品類別</label><br>
                                     <div class="d-flex flex-wrap gap-2 justify-content-start" role="group">
-                                        <input type="checkbox" class="btn-check btn-all-cate" id="category-btncheck" name="category[]"
-                                            value="all" checked>
-                                        <label class="btn btn-outline-primary rounded-pill" for="category-btncheck">全部類別</label>
+                                        <input type="checkbox" class="btn-check btn-all-cate" id="category-btncheck"
+                                            name="category[]" value="all" checked>
+                                        <label class="btn btn-outline-primary rounded-pill"
+                                            for="category-btncheck">全部類別</label>
                                         <?php foreach ($rowsCate as $rowCate): ?>
-                                            <input type="checkbox" class="btn-check btn-other-cate" id="category-btncheck<?= $rowCate["category_id"] ?>"
-                                                name="category[]" value="<?= $rowCate["category_id"] ?>">
+                                            <input type="checkbox" class="btn-check btn-other-cate"
+                                                id="category-btncheck<?= $rowCate["category_id"] ?>" name="category[]"
+                                                value="<?= $rowCate["category_id"] ?>">
                                             <label class="btn btn-outline-primary rounded-pill"
                                                 for="category-btncheck<?= $rowCate["category_id"] ?>"><?= $rowCate["category_name"] ?></label>
                                         <?php endforeach; ?>
@@ -490,8 +496,8 @@ try {
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠開始日期</span>
-                                                <input type="date" class="form-control input-date start-at" name="start-at"
-                                                    >
+                                                <input type="date" class="form-control input-date start-at"
+                                                    name="start-at">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -507,7 +513,7 @@ try {
                                         <div class="input-group">
                                             <span class="input-group-text">領取後</span>
                                             <input type="number" class="form-control" name="valid-days" min="1"
-                                                 placeholder="請輸入有效天數">
+                                                placeholder="請輸入有效天數">
                                             <span class="input-group-text">天內有效</span>
                                         </div>
                                     </div>
@@ -530,7 +536,7 @@ try {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Oak!y 2025</span>
                     </div>
                 </div>
             </footer>

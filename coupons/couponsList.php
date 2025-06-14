@@ -223,13 +223,12 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
         <!-- Sidebar -->
         <ul class="navbar-nav bg-menu sidebar sidebar-dark accordion" id="accordionSidebar">
 
+            <!-- new -->
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+            <a class="d-flex justify-content-center my-5" href="index.html">
+                    <img src="../img/Oakly-logo.png" alt="Oakly" class="logo">
             </a>
+            <!-- new end -->
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -860,7 +859,7 @@ if (isset($_GET["member_level"]) && $_GET["member_level"] !== "") {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Oak!y 2025</span>
                     </div>
                 </div>
             </footer>

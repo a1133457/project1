@@ -34,12 +34,12 @@ try {
     // 商品
     $stmtCateSelect = $pdo->prepare($sqlCateSelect);
     $stmtCateSelect->execute([$id]);
-    $selectedCategories = $stmtCateSelect->fetchAll(PDO::FETCH_COLUMN,1);
+    $selectedCategories = $stmtCateSelect->fetchAll(PDO::FETCH_COLUMN, 1);
 
     //會員
     $stmtLvSelect = $pdo->prepare($sqlLvSelect);
     $stmtLvSelect->execute([$id]);
-    $selectedLevels = $stmtLvSelect->fetchAll(PDO::FETCH_COLUMN,1);
+    $selectedLevels = $stmtLvSelect->fetchAll(PDO::FETCH_COLUMN, 1);
 
 } catch (PDOException $e) {
     echo "錯誤: {{$e->getMessage()}}";
@@ -95,13 +95,12 @@ try {
         <!-- Sidebar -->
         <ul class="navbar-nav bg-menu sidebar sidebar-dark accordion" id="accordionSidebar">
 
+            <!-- new -->
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+            <a class="d-flex justify-content-center my-5" href="index.html">
+                    <img src="../img/Oakly-logo.png" alt="Oakly" class="logo">
             </a>
+            <!-- new end -->
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -418,7 +417,8 @@ try {
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">名稱</span>
                                     <input required name="name" type="text" class="form-control" placeholder="請輸入優惠券名稱"
-                                        value="<?= $row["name"] ?>" minlength="3" maxlength="30" title="請輸入 3~30 字的優惠券名稱">
+                                        value="<?= $row["name"] ?>" minlength="3" maxlength="30"
+                                        title="請輸入 3~30 字的優惠券名稱">
                                 </div>
 
                                 <!-- 折扣碼與折扣金額 -->
@@ -427,7 +427,8 @@ try {
                                         <div class="input-group">
                                             <span class="input-group-text">折扣碼</span>
                                             <input required name="code" type="text" class="form-control"
-                                                value="<?= $row["code"] ?>"  minlength="5" maxlength="12" title="請輸入 4~12 字母或數字" readonly>
+                                                value="<?= $row["code"] ?>" minlength="5" maxlength="12"
+                                                title="請輸入 4~12 字母或數字" readonly>
                                         </div>
                                     </div>
 
@@ -474,8 +475,9 @@ try {
                                         <label class="btn btn-outline-secondary rounded-pill"
                                             for="member-btncheck">全部會員</label>
                                         <?php foreach ($rowsLv as $rowLv): ?>
-                                            <input type="checkbox" class="btn-check btn-other-lv" id="member-btncheck<?= $rowLv["id"] ?>"
-                                                name="member-levels[]" value="<?= $rowLv["id"] ?>" <?= in_array($rowLv["id"], $selectedLevels) ? "checked" : "" ?>>
+                                            <input type="checkbox" class="btn-check btn-other-lv"
+                                                id="member-btncheck<?= $rowLv["id"] ?>" name="member-levels[]"
+                                                value="<?= $rowLv["id"] ?>" <?= in_array($rowLv["id"], $selectedLevels) ? "checked" : "" ?>>
                                             <label class="btn btn-outline-secondary rounded-pill"
                                                 for="member-btncheck<?= $rowLv["id"] ?>"><?= $rowLv["name"] ?></label>
                                         <?php endforeach; ?>
@@ -490,8 +492,9 @@ try {
                                         <label class="btn btn-outline-primary rounded-pill"
                                             for="category-btncheck">全部類別</label>
                                         <?php foreach ($rowsCate as $rowCate): ?>
-                                            <input type="checkbox" class="btn-check btn-other-cate" id="category-btncheck<?= $rowCate["category_id"] ?>"
-                                                name="category[]" value="<?= $rowCate["category_id"] ?>" <?= in_array($rowCate["category_id"], $selectedCategories) ? "checked" : "" ?>>
+                                            <input type="checkbox" class="btn-check btn-other-cate"
+                                                id="category-btncheck<?= $rowCate["category_id"] ?>" name="category[]"
+                                                value="<?= $rowCate["category_id"] ?>" <?= in_array($rowCate["category_id"], $selectedCategories) ? "checked" : "" ?>>
                                             <label class="btn btn-outline-primary rounded-pill"
                                                 for="category-btncheck<?= $rowCate["category_id"] ?>"><?= $rowCate["category_name"] ?></label>
                                         <?php endforeach; ?>
@@ -521,8 +524,8 @@ try {
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <span class="input-group-text">優惠開始日期</span>
-                                                <input type="date" class="form-control input-date start-at" name="start-at"
-                                                     value="<?= $row["start_at"] ?>">
+                                                <input type="date" class="form-control input-date start-at"
+                                                    name="start-at" value="<?= $row["start_at"] ?>">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -533,15 +536,14 @@ try {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
 
                                     <!-- 領取後幾天區塊 -->
                                     <div id="relative_section" class="mb-4 d-none">
                                         <div class="input-group">
                                             <span class="input-group-text">領取後</span>
                                             <input type="number" class="form-control valid-days" name="valid-days"
-                                                min="1" placeholder="請輸入有效天數"
-                                                value="<?= $row["valid_days"] ?>">
+                                                min="1" placeholder="請輸入有效天數" value="<?= $row["valid_days"] ?>">
                                             <span class="input-group-text">天內有效</span>
                                         </div>
                                     </div>
@@ -564,7 +566,7 @@ try {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Oak!y 2025</span>
                     </div>
                 </div>
             </footer>
