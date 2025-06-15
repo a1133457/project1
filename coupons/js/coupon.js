@@ -90,21 +90,31 @@ categoryDropdownItems.forEach(item => {
 });
 
 //搜尋
-btnSearch.addEventListener("click", function () {
-    const query = inputText.value;
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
-
-    if (query === "") {
-        params.delete("search");
-    } else {
-        params.set("search", query);
+inputText.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault(); //  阻止預設 submit 行為
+        runSearch();        //  觸發搜尋邏輯
     }
-
-    params.set("page", 1);
-    window.location.href = url.toString();
 });
 
+btnSearch.addEventListener("click", function () {
+    runSearch(); // 👈 點按按鈕也用同一個邏輯
+});
+
+
+function runSearch() {
+    const query = inputText.value;
+    const url = new URL(window.location.href);
+
+    if (query === "") {
+        url.searchParams.delete("search");
+    } else {
+        url.searchParams.set("search", query);
+    }
+
+    url.searchParams.set("page", 1);
+    window.location.href = url.toString(); //  導向新網址，保留其他篩選條件
+}
 
 
 // 點月曆文字 也會跑出月曆來
