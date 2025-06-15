@@ -428,7 +428,7 @@ try {
                                             <span class="input-group-text">折扣碼</span>
                                             <input required name="code" type="text" class="form-control"
                                                 value="<?= $row["code"] ?>" minlength="5" maxlength="12"
-                                                title="請輸入 4~12 字母或數字" readonly>
+                                                 readonly>
                                         </div>
                                     </div>
 
@@ -444,7 +444,7 @@ try {
                                             <input required type="number" id="discount_value" name="discount"
                                                 class="form-control" step="0.01"
                                                 value="<?= $row["discount_type"] == 1 ? (int) $row["discount"] : (float) $row["discount"] ?>">
-                                            <span class="input-group-text">元</span>
+                                            <span class="input-group-text dollor">元</span>
                                         </div>
                                     </div>
                                 </div>

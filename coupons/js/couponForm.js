@@ -28,6 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
     relativeRadio.addEventListener("change", updateSections);
 });
 
+
+// 頁面載入時先檢查一次 元
+if (discountType.value == 2) {
+    dollor.classList.add("d-none");
+} else {
+    dollor.classList.remove("d-none");
+}
 // 選擇折扣時 元要不要顯示
 discountType.addEventListener("change", () => {
     if (discountType.value == 2) {
